@@ -1,0 +1,393 @@
+<!-- PRD-SECTION: 2.4 WIREFRAMES -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PRD Mockups</title>
+<style>
+  /* ── Import tokens from design system ── */
+  :root {
+    --color-bg:        #FAF9F5;
+    --color-surface:   #FFFFFF;
+    --color-border:    #D1CFC5;
+    --color-text:      #141413;
+    --color-text-muted:#87867F;
+    --color-text-dim:  #3D3D3A;
+    --color-primary:   #D97757;
+    --color-primary-hover: #C7684C;
+    --color-primary-bg: rgba(217,119,87,0.10);
+    --color-accent:    #E3DACC;
+    --color-success:   #788C5D;
+    --color-gray-100:  #F0EEE6;
+    --font-serif: ui-serif, Georgia, serif;
+    --font-sans:  system-ui, -apple-system, sans-serif;
+    --font-mono:  ui-monospace, 'SF Mono', Menlo, monospace;
+    --r-sm: 8px; --r-md: 12px; --r-pill: 999px;
+    --shadow-sm: 0 1px 2px rgba(20,20,19,0.06);
+    --shadow-md: 0 4px 10px rgba(20,20,19,0.08);
+    --border: 1.5px solid var(--color-border);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    padding: 48px 24px 96px;
+  }
+
+  .page { max-width: 1100px; margin: 0 auto; }
+
+  /* ── Page chrome ── */
+  .page-header { margin-bottom: 48px; }
+  .page-header h1 { font-family: var(--font-serif); font-size: 32px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .page-header p  { font-size: 14px; color: var(--color-text-muted); }
+
+  /* ── Screen frame ── */
+  .screen-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin-bottom: 12px;
+  }
+  .screen {
+    background: var(--color-surface);
+    border: var(--border);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: 64px;
+  }
+  .screen-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--color-gray-100);
+    border-bottom: var(--border);
+  }
+  .screen-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .screen-body { padding: 32px; }
+
+  /* ── Shared component helpers ── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    height: 36px; padding: 0 16px; font-family: var(--font-sans);
+    font-size: 14px; font-weight: 500; border-radius: var(--r-sm);
+    border: 1.5px solid transparent; cursor: pointer;
+  }
+  .btn-primary   { background: var(--color-primary); color: #fff; }
+  .btn-secondary { background: var(--color-surface); color: var(--color-text); border-color: var(--color-border); }
+  .btn-ghost     { background: transparent; color: var(--color-text-dim); }
+
+  .badge {
+    display: inline-flex; align-items: center;
+    height: 22px; padding: 0 9px;
+    font-size: 12px; font-weight: 500;
+    border-radius: var(--r-pill);
+  }
+  .badge-neutral { background: var(--color-gray-100); color: var(--color-text-dim); }
+  .badge-primary { background: var(--color-primary-bg); color: var(--color-primary); }
+  .badge-success { background: rgba(120,140,93,0.12); color: var(--color-success); }
+
+  .input {
+    height: 38px; padding: 0 12px;
+    font-family: var(--font-sans); font-size: 14px;
+    color: var(--color-text); background: var(--color-surface);
+    border: var(--border); border-radius: var(--r-sm);
+    outline: none; width: 100%;
+  }
+  .input::placeholder { color: var(--color-text-muted); }
+
+  /* ── Layout helpers ── */
+  .flex { display: flex; }
+  .flex-col { display: flex; flex-direction: column; }
+  .items-center { align-items: center; }
+  .items-start { align-items: flex-start; }
+  .justify-between { justify-content: space-between; }
+  .gap-2 { gap: 8px; } .gap-3 { gap: 12px; } .gap-4 { gap: 16px; } .gap-5 { gap: 24px; }
+  .wrap { flex-wrap: wrap; }
+
+  /* ── Screen 1: PRD List ── */
+  .prd-list-header { margin-bottom: 24px; }
+  .prd-list-header h2 { font-family: var(--font-serif); font-size: 24px; font-weight: 500; }
+
+  .prd-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .prd-table th {
+    text-align: left; padding: 10px 16px;
+    border-bottom: 1.5px solid var(--color-border);
+    font-size: 11px; font-weight: 600;
+    color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .prd-table td { padding: 14px 16px; border-bottom: 1px solid var(--color-gray-100); vertical-align: middle; }
+  .prd-table tr:last-child td { border-bottom: none; }
+  .prd-table tr:hover td { background: var(--color-gray-100); }
+
+  .owner-chip { display: flex; align-items: center; gap: 8px; }
+  .avatar {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--color-accent); color: var(--color-text-dim);
+    font-size: 11px; font-weight: 600;
+  }
+
+  /* ── Screen 2: PRD Editor ── */
+  .editor-layout { display: grid; grid-template-columns: 220px 1fr; gap: 0; min-height: 520px; }
+
+  .editor-nav {
+    border-right: var(--border);
+    padding: 20px 0;
+  }
+  .nav-section-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--color-text-muted);
+    padding: 0 16px; margin-bottom: 6px; margin-top: 16px;
+  }
+  .nav-section-label:first-child { margin-top: 0; }
+  .nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 16px; font-size: 13px; cursor: pointer;
+    color: var(--color-text-dim); border-radius: 0;
+    transition: background 0.1s;
+  }
+  .nav-item:hover { background: var(--color-gray-100); }
+  .nav-item.active { background: var(--color-primary-bg); color: var(--color-primary); font-weight: 500; }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.5; flex-shrink: 0; }
+
+  .editor-main { padding: 28px 32px; overflow-y: auto; }
+  .editor-section-title { font-family: var(--font-serif); font-size: 22px; font-weight: 500; margin-bottom: 20px; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+  .label { font-size: 13px; font-weight: 500; color: var(--color-text-dim); }
+  .hint  { font-size: 12px; color: var(--color-text-muted); }
+  textarea.input { height: auto; padding: 10px 12px; resize: vertical; }
+
+  .progress-bar { height: 4px; background: var(--color-gray-100); border-radius: var(--r-pill); overflow: hidden; margin-bottom: 24px; }
+  .progress-fill { height: 100%; background: var(--color-primary); border-radius: var(--r-pill); transition: width 0.3s; }
+
+  /* ── Screen 3: AI Generation Panel ── */
+  .ai-panel {
+    background: var(--color-gray-100);
+    border-left: var(--border);
+    padding: 24px;
+    width: 320px;
+    flex-shrink: 0;
+  }
+  .ai-panel h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .ai-panel .sub { font-size: 13px; color: var(--color-text-muted); margin-bottom: 20px; }
+
+  .ai-output {
+    background: var(--color-surface);
+    border: var(--border);
+    border-radius: var(--r-md);
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-text);
+    margin-bottom: 16px;
+  }
+  .ai-output p + p { margin-top: 8px; }
+
+  .thinking-indicator { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--color-text-muted); }
+  .thinking-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--color-primary); opacity: 0.7;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
+  .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-header">
+    <h1>PRD Creation — Mockups</h1>
+    <p>Key screens for the PRD creation flow. Replace placeholder content with your actual data.</p>
+  </div>
+
+  <!-- ── SCREEN 1: PRD LIST ── -->
+  <div class="screen-label">Screen 1 — PRD Dashboard</div>
+  <div class="screen">
+    <div class="screen-bar">
+      <div class="screen-dot" style="background:#FF5F57"></div>
+      <div class="screen-dot" style="background:#FFBD2E"></div>
+      <div class="screen-dot" style="background:#28CA41"></div>
+    </div>
+    <div class="screen-body">
+      <div class="flex items-center justify-between prd-list-header">
+        <div>
+          <h2>Product Requirements</h2>
+          <p style="font-size:13px;color:var(--color-text-muted);margin-top:4px;">12 documents · 3 in review</p>
+        </div>
+        <div class="flex gap-3">
+          <input class="input" type="text" placeholder="Search PRDs…" style="width:220px;">
+          <button class="btn btn-primary">+ New PRD</button>
+        </div>
+      </div>
+
+      <table class="prd-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Owner</th>
+            <th>Status</th>
+            <th>Updated</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="font-size:14px;">AI-Assisted PRD Drafting</strong><br><span style="font-size:12px;color:var(--color-text-muted);">v0.3 · Discovery</span></td>
+            <td><div class="owner-chip"><div class="avatar">GL</div> Gilbert Liu</div></td>
+            <td><span class="badge badge-primary">In Review</span></td>
+            <td style="color:var(--color-text-muted);font-size:13px;">Today</td>
+            <td><button class="btn btn-ghost" style="height:28px;padding:0 10px;font-size:13px;">Open</button></td>
+          </tr>
+          <tr>
+            <td><strong style="font-size:14px;">User Research Synthesis</strong><br><span style="font-size:12px;color:var(--color-text-muted);">v0.1 · Discovery</span></td>
+            <td><div class="owner-chip"><div class="avatar">SR</div> Sarah R.</div></td>
+            <td><span class="badge badge-neutral">Draft</span></td>
+            <td style="color:var(--color-text-muted);font-size:13px;">2 days ago</td>
+            <td><button class="btn btn-ghost" style="height:28px;padding:0 10px;font-size:13px;">Open</button></td>
+          </tr>
+          <tr>
+            <td><strong style="font-size:14px;">Design System Tokens</strong><br><span style="font-size:12px;color:var(--color-text-muted);">v1.0 · Deploy</span></td>
+            <td><div class="owner-chip"><div class="avatar">MK</div> M. Kim</div></td>
+            <td><span class="badge badge-success">Approved</span></td>
+            <td style="color:var(--color-text-muted);font-size:13px;">1 week ago</td>
+            <td><button class="btn btn-ghost" style="height:28px;padding:0 10px;font-size:13px;">Open</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 2: PRD EDITOR ── -->
+  <div class="screen-label">Screen 2 — PRD Editor</div>
+  <div class="screen">
+    <div class="screen-bar">
+      <div class="screen-dot" style="background:#FF5F57"></div>
+      <div class="screen-dot" style="background:#FFBD2E"></div>
+      <div class="screen-dot" style="background:#28CA41"></div>
+    </div>
+    <div class="editor-layout">
+      <!-- Nav -->
+      <nav class="editor-nav">
+        <div class="nav-section-label">Discovery</div>
+        <div class="nav-item active"><span class="nav-dot"></span>1.1 Problem</div>
+        <div class="nav-item"><span class="nav-dot"></span>1.2 Market</div>
+        <div class="nav-item"><span class="nav-dot"></span>1.3 Users</div>
+        <div class="nav-item"><span class="nav-dot"></span>1.4 Pain Points</div>
+        <div class="nav-item"><span class="nav-dot"></span>1.5 AI Opportunity</div>
+        <div class="nav-item"><span class="nav-dot"></span>1.6 Goals</div>
+        <div class="nav-section-label">Design</div>
+        <div class="nav-item"><span class="nav-dot"></span>2.1 Solution</div>
+        <div class="nav-item"><span class="nav-dot"></span>2.2 Workflow</div>
+        <div class="nav-item"><span class="nav-dot"></span>2.3 Features</div>
+        <div class="nav-section-label">Develop</div>
+        <div class="nav-item"><span class="nav-dot"></span>3.1 Model</div>
+        <div class="nav-item"><span class="nav-dot"></span>3.2 I/O</div>
+        <div class="nav-item"><span class="nav-dot"></span>3.3 Stack</div>
+        <div class="nav-section-label">Deploy</div>
+        <div class="nav-item"><span class="nav-dot"></span>4.1 Launch</div>
+        <div class="nav-item"><span class="nav-dot"></span>4.5 Metrics</div>
+      </nav>
+
+      <!-- Main editor -->
+      <div class="editor-main">
+        <div class="flex items-center justify-between" style="margin-bottom:8px;">
+          <span style="font-size:13px;color:var(--color-text-muted);">Section 1 of 4 — Discovery</span>
+          <span class="badge badge-primary">In Review</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:25%;"></div></div>
+
+        <div class="editor-section-title">1.1 Problem &amp; Opportunity</div>
+
+        <div class="field">
+          <label class="label">Problem statement</label>
+          <textarea class="input" rows="3" placeholder="State the problem in 1–2 sentences. A stranger should be able to read this alone and understand the value and risk of not solving it."></textarea>
+          <span class="hint">What changes for users if this stays unsolved?</span>
+        </div>
+
+        <div class="field">
+          <label class="label">Why this matters (users &amp; business)</label>
+          <textarea class="input" rows="2" placeholder="e.g. PMs spend 6+ hrs per PRD on formatting and boilerplate — AI can reclaim that time for strategic thinking."></textarea>
+        </div>
+
+        <div class="field">
+          <label class="label">Evidence backing this up</label>
+          <textarea class="input" rows="2" placeholder="e.g. User interviews (n=12), support ticket analysis, NPS comments…"></textarea>
+        </div>
+
+        <div class="flex gap-3" style="margin-top:8px;">
+          <button class="btn btn-primary">Save &amp; Continue</button>
+          <button class="btn btn-secondary">Save Draft</button>
+          <button class="btn btn-ghost">✨ Generate with AI</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 3: AI GENERATION ── -->
+  <div class="screen-label">Screen 3 — AI Generation Panel</div>
+  <div class="screen">
+    <div class="screen-bar">
+      <div class="screen-dot" style="background:#FF5F57"></div>
+      <div class="screen-dot" style="background:#FFBD2E"></div>
+      <div class="screen-dot" style="background:#28CA41"></div>
+    </div>
+    <div class="flex" style="min-height:400px;">
+      <!-- Left: editor context -->
+      <div style="flex:1; padding:28px 32px; border-right:var(--border);">
+        <div class="editor-section-title" style="margin-bottom:16px;">1.5 AI Opportunity</div>
+        <p style="font-size:14px;color:var(--color-text-muted);margin-bottom:20px;">
+          Identify which pain points are best solved by LLMs vs. a form, workflow, or better UX.
+        </p>
+        <div class="field">
+          <label class="label">Brief context for AI</label>
+          <textarea class="input" rows="4" placeholder="Paste or summarize your pain points here so the AI can suggest which are genuine AI opportunities…"></textarea>
+        </div>
+        <button class="btn btn-primary">✨ Generate AI Opportunities</button>
+      </div>
+
+      <!-- Right: AI panel -->
+      <div class="ai-panel">
+        <h3>AI Assistant</h3>
+        <p class="sub">Generating section 1.5 based on your pain points…</p>
+
+        <div class="thinking-indicator" style="margin-bottom:16px;">
+          <div class="thinking-dot"></div>
+          <div class="thinking-dot"></div>
+          <div class="thinking-dot"></div>
+          <span>Analyzing pain points</span>
+        </div>
+
+        <div class="ai-output">
+          <p><strong>Top AI opportunities identified:</strong></p>
+          <p>1. <strong>Auto-draft problem statement</strong> — high F×S, LLM excels at synthesizing scattered inputs into coherent framing.</p>
+          <p>2. <strong>Pain point prioritization</strong> — LLM can score frequency×severity from interview notes without manual tagging.</p>
+          <p>3. <strong>Section gap detection</strong> — LLM can flag missing required fields before sharing externally.</p>
+        </div>
+
+        <div class="flex gap-2">
+          <button class="btn btn-primary" style="flex:1;font-size:13px;">Accept all</button>
+          <button class="btn btn-secondary" style="font-size:13px;">Edit</button>
+          <button class="btn btn-ghost" style="font-size:13px;">Retry</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
+<!-- /PRD-SECTION -->

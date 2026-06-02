@@ -1,0 +1,345 @@
+<!-- PRD-SECTION: 3.3 ARCHITECTURE -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PRD Creation — Data Flow</title>
+<style>
+  :root {
+    --color-bg:        #FAF9F5;
+    --color-surface:   #FFFFFF;
+    --color-border:    #D1CFC5;
+    --color-text:      #141413;
+    --color-text-muted:#87867F;
+    --color-text-dim:  #3D3D3A;
+    --color-primary:   #D97757;
+    --color-primary-bg:rgba(217,119,87,0.10);
+    --color-accent:    #E3DACC;
+    --color-success:   #788C5D;
+    --color-success-bg:rgba(120,140,93,0.12);
+    --color-info:      #5C7CA3;
+    --color-info-bg:   rgba(92,124,163,0.10);
+    --color-gray-100:  #F0EEE6;
+    --color-gray-300:  #D1CFC5;
+    --font-serif: ui-serif, Georgia, serif;
+    --font-sans:  system-ui, -apple-system, sans-serif;
+    --font-mono:  ui-monospace, 'SF Mono', Menlo, monospace;
+    --r-sm: 8px; --r-md: 12px; --r-pill: 999px;
+    --shadow-sm: 0 1px 2px rgba(20,20,19,0.06);
+    --shadow-md: 0 4px 10px rgba(20,20,19,0.08);
+    --border: 1.5px solid var(--color-border);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    padding: 48px 24px 96px;
+  }
+
+  .page { max-width: 1100px; margin: 0 auto; }
+
+  h1 { font-family: var(--font-serif); font-size: 32px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 6px; }
+  h2 { font-family: var(--font-serif); font-size: 22px; font-weight: 500; margin-bottom: 20px; }
+  .sub { font-size: 14px; color: var(--color-text-muted); margin-bottom: 48px; }
+
+  /* ── Diagram containers ── */
+  .diagram-section { margin-bottom: 64px; }
+  .diagram-label {
+    font-family: var(--font-mono);
+    font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--color-text-muted);
+    margin-bottom: 16px;
+  }
+  .diagram {
+    background: var(--color-surface);
+    border: var(--border);
+    border-radius: var(--r-md);
+    padding: 40px 32px;
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+  }
+
+  /* ── Node styles ── */
+  .node {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-width: 120px;
+    padding: 12px 16px;
+    border-radius: var(--r-sm);
+    border: var(--border);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+    position: relative;
+  }
+  .node .node-label { font-size: 11px; color: var(--color-text-muted); font-weight: 400; margin-top: 3px; }
+
+  .node-input    { background: var(--color-info-bg);    border-color: var(--color-info);    color: var(--color-info); }
+  .node-process  { background: var(--color-surface);    border-color: var(--color-border);  color: var(--color-text); }
+  .node-ai       { background: var(--color-primary-bg); border-color: var(--color-primary); color: var(--color-primary); }
+  .node-store    { background: var(--color-accent);     border-color: var(--color-border);  color: var(--color-text-dim); border-style: dashed; }
+  .node-output   { background: var(--color-success-bg); border-color: var(--color-success); color: var(--color-success); }
+  .node-user     { background: var(--color-gray-100);   border-color: var(--color-border);  color: var(--color-text-dim); border-radius: var(--r-pill); }
+
+  /* ── Arrow ── */
+  .arrow-row { display: flex; align-items: center; gap: 0; }
+  .arrow-line { flex: 1; height: 1.5px; background: var(--color-gray-300); }
+  .arrow-head { width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 7px solid var(--color-gray-300); }
+  .arrow-label { font-size: 11px; color: var(--color-text-muted); text-align: center; margin-top: 4px; font-family: var(--font-mono); }
+
+  .arrow-down-wrap { display: flex; flex-direction: column; align-items: center; padding: 6px 0; }
+  .arrow-down-line { width: 1.5px; height: 28px; background: var(--color-gray-300); }
+  .arrow-down-head { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid var(--color-gray-300); }
+
+  /* ── Flow layouts ── */
+  .flow-row { display: flex; align-items: center; gap: 0; flex-wrap: nowrap; }
+  .flow-col { display: flex; flex-direction: column; align-items: center; }
+  .flow-grid {
+    display: grid;
+    gap: 0;
+  }
+
+  /* ── Legend ── */
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 24px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--color-text-muted); }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── Section divider ── */
+  .divider { border: none; border-top: 1px solid var(--color-border); margin: 48px 0; }
+
+  /* ── Swimlane ── */
+  .swimlane-wrap { overflow-x: auto; }
+  .swimlane {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 0;
+    min-width: 700px;
+  }
+  .lane-label-cell {
+    display: flex; align-items: center; justify-content: flex-end;
+    padding: 16px 16px 16px 0;
+    font-size: 12px; font-weight: 600; color: var(--color-text-muted);
+    text-align: right; border-right: var(--border);
+  }
+  .lane-body {
+    padding: 16px 0 16px 24px;
+    display: flex; align-items: center; gap: 0;
+    border-bottom: 1px solid var(--color-gray-100);
+  }
+  .lane-body:last-child { border-bottom: none; }
+  .lane-label-cell:last-of-type { border-bottom: none; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Data Flow Diagrams</h1>
+  <p class="sub">System-level flows for the PRD creation tool. Update nodes and labels to match your actual architecture.</p>
+
+  <!-- ── DIAGRAM 1: End-to-end PRD creation flow ── -->
+  <div class="diagram-section">
+    <div class="diagram-label">Diagram 1 — End-to-End PRD Creation Flow</div>
+    <div class="diagram">
+      <div class="flow-row" style="justify-content:center; gap:0;">
+
+        <!-- User -->
+        <div class="flow-col">
+          <div class="node node-user">PM / User</div>
+        </div>
+
+        <!-- Arrow 1 -->
+        <div class="flow-col" style="min-width:60px;">
+          <div class="arrow-row"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="arrow-label">Brief input</div>
+        </div>
+
+        <!-- Inputs stage -->
+        <div class="flow-col">
+          <div class="node node-input">Inputs<div class="node-label">Problem · Research · Context</div></div>
+        </div>
+
+        <!-- Arrow 2 -->
+        <div class="flow-col" style="min-width:60px;">
+          <div class="arrow-row"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="arrow-label">structured data</div>
+        </div>
+
+        <!-- AI Orchestrator -->
+        <div class="flow-col">
+          <div class="node node-ai">AI Orchestrator<div class="node-label">Claude / LLM</div></div>
+        </div>
+
+        <!-- Arrow 3 -->
+        <div class="flow-col" style="min-width:60px;">
+          <div class="arrow-row"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="arrow-label">draft sections</div>
+        </div>
+
+        <!-- PRD Document -->
+        <div class="flow-col">
+          <div class="node node-output">PRD Document<div class="node-label">Markdown / HTML</div></div>
+        </div>
+
+        <!-- Arrow 4 -->
+        <div class="flow-col" style="min-width:60px;">
+          <div class="arrow-row"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="arrow-label">review</div>
+        </div>
+
+        <!-- Output -->
+        <div class="flow-col">
+          <div class="node node-user">Stakeholders</div>
+        </div>
+
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--color-info-bg);border:1px solid var(--color-info);"></div>Input layer</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--color-primary-bg);border:1px solid var(--color-primary);"></div>AI / LLM layer</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--color-success-bg);border:1px solid var(--color-success);"></div>Output / artifact</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--color-gray-100);border:1px solid var(--color-border);border-radius:50%;"></div>Human actor</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--color-accent);border:1px dashed var(--color-border);"></div>Data store</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DIAGRAM 2: AI Section Generation Flow ── -->
+  <div class="diagram-section">
+    <div class="diagram-label">Diagram 2 — AI Section Generation (Detailed)</div>
+    <div class="diagram">
+      <div class="flow-col" style="align-items:stretch; gap:0; max-width:520px; margin:0 auto;">
+
+        <!-- Row 1 -->
+        <div class="flow-row" style="justify-content:space-between; gap:12px;">
+          <div class="node node-input" style="flex:1;">User Brief<div class="node-label">problem, market, users</div></div>
+          <div class="node node-store" style="flex:1;">Context Files<div class="node-label">inputs/ directory</div></div>
+          <div class="node node-store" style="flex:1;">Templates<div class="node-label">framework/</div></div>
+        </div>
+
+        <!-- Down arrow -->
+        <div class="arrow-down-wrap">
+          <div class="arrow-down-line"></div>
+          <div class="arrow-down-head"></div>
+          <div class="arrow-label" style="margin-top:4px;">prompt construction</div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="node node-ai" style="width:100%;">Prompt Builder<div class="node-label">assembles system prompt + user context + template structure</div></div>
+
+        <!-- Down arrow -->
+        <div class="arrow-down-wrap">
+          <div class="arrow-down-line"></div>
+          <div class="arrow-down-head"></div>
+          <div class="arrow-label" style="margin-top:4px;">API call</div>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="node node-ai" style="width:100%;">Claude (claude-sonnet-4-6)<div class="node-label">generates section content · streams tokens</div></div>
+
+        <!-- Down arrow -->
+        <div class="arrow-down-wrap">
+          <div class="arrow-down-line"></div>
+          <div class="arrow-down-head"></div>
+          <div class="arrow-label" style="margin-top:4px;">structured output</div>
+        </div>
+
+        <!-- Row 4 -->
+        <div class="flow-row" style="justify-content:space-between; gap:12px;">
+          <div class="node node-process" style="flex:1;">Section Content<div class="node-label">markdown text</div></div>
+          <div class="node node-process" style="flex:1;">Confidence Score<div class="node-label">per-field</div></div>
+          <div class="node node-process" style="flex:1;">Gap Flags<div class="node-label">missing / ambiguous</div></div>
+        </div>
+
+        <!-- Down arrow -->
+        <div class="arrow-down-wrap">
+          <div class="arrow-down-line"></div>
+          <div class="arrow-down-head"></div>
+          <div class="arrow-label" style="margin-top:4px;">PM review</div>
+        </div>
+
+        <!-- Row 5 -->
+        <div class="flow-row" style="justify-content:space-between; gap:12px;">
+          <div class="node node-output" style="flex:1;">Accepted Sections<div class="node-label">merged into PRD</div></div>
+          <div class="node node-store" style="flex:1;">Eval Log<div class="node-label">outputs/ directory</div></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DIAGRAM 3: Swimlane — Multi-agent Review ── -->
+  <div class="diagram-section">
+    <div class="diagram-label">Diagram 3 — Multi-Agent Review Swimlane</div>
+    <div class="diagram">
+      <div class="swimlane-wrap">
+        <div class="swimlane">
+
+          <!-- PM lane -->
+          <div class="lane-label-cell">PM</div>
+          <div class="lane-body">
+            <div class="node node-user" style="min-width:100px;">Submit PRD</div>
+            <div class="arrow-row" style="flex:1;"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+            <div style="flex:3"></div>
+            <div style="flex:2"></div>
+            <div class="arrow-row" style="flex:1;"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+            <div class="node node-output" style="min-width:120px;">Final PRD</div>
+          </div>
+
+          <!-- Engineer agent lane -->
+          <div class="lane-label-cell">Engineer<br>Agent</div>
+          <div class="lane-body">
+            <div style="flex:1"></div>
+            <div class="node node-ai" style="min-width:130px;">Review feasibility<div class="node-label">tech risks · LOE</div></div>
+            <div class="arrow-row" style="flex:1;"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+            <div class="node node-process" style="min-width:110px;">Feedback<div class="node-label">section comments</div></div>
+            <div style="flex:3"></div>
+          </div>
+
+          <!-- Executive agent lane -->
+          <div class="lane-label-cell">Executive<br>Agent</div>
+          <div class="lane-body">
+            <div style="flex:1"></div>
+            <div class="node node-ai" style="min-width:130px;">Review strategy<div class="node-label">biz impact · risks</div></div>
+            <div class="arrow-row" style="flex:1;"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+            <div class="node node-process" style="min-width:110px;">Feedback<div class="node-label">exec summary</div></div>
+            <div style="flex:3"></div>
+          </div>
+
+          <!-- Researcher agent lane -->
+          <div class="lane-label-cell">Researcher<br>Agent</div>
+          <div class="lane-body">
+            <div style="flex:1"></div>
+            <div class="node node-ai" style="min-width:130px;">Review user fit<div class="node-label">pain points · JTBD</div></div>
+            <div class="arrow-row" style="flex:1;"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+            <div class="node node-process" style="min-width:110px;">Feedback<div class="node-label">persona gaps</div></div>
+            <div style="flex:3"></div>
+          </div>
+
+          <!-- Synthesis lane -->
+          <div class="lane-label-cell">Synthesis</div>
+          <div class="lane-body">
+            <div style="flex:3"></div>
+            <div class="node node-ai" style="min-width:140px;">Merge &amp; Resolve<div class="node-label">conflicting feedback</div></div>
+            <div class="arrow-row" style="flex:1;"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+            <div class="node node-output" style="min-width:110px;">Review Report<div class="node-label">consolidated</div></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
+<!-- /PRD-SECTION -->
